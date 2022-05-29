@@ -3,8 +3,8 @@ package eutil
 import "strconv"
 
 const (
-	_        = iota
-	KB int64 = 1 << (10*iota + 3)
+	B int64 = 1 << (10*iota + 3)
+	KB
 	MB
 	GB
 	TB
@@ -25,23 +25,26 @@ func SizeFmt(bit int64) string {
 		return size
 	}
 	switch {
-	case bit < KB:
+	case bit < B:
 		return strconv.FormatInt(bit, 10) + unit
+	case bit >= B && bit < KB:
+		sizeFloat /= 1 << 3
+		unit = "B"
 	case bit >= KB && bit < MB:
 		sizeFloat /= 1 << 13
-		unit = "Kb"
+		unit = "KB"
 	case bit >= MB && bit < GB:
 		sizeFloat /= 1 << 23
-		unit = "Mb"
+		unit = "MB"
 	case bit >= GB && bit < TB:
 		sizeFloat /= 1 << 33
-		unit = "Gb"
+		unit = "GB"
 	case bit >= TB && bit < PB:
 		sizeFloat /= 1 << 43
-		unit = "Tb"
+		unit = "TB"
 	case bit >= PB:
 		sizeFloat /= 1 << 53
-		unit = "Pb"
+		unit = "PB"
 	}
-	return strconv.FormatFloat(sizeFloat, 'f', 2, 64) + unit
+	return strconv.FormatFloat(sizeFloat, 'f', 1, 64) + unit
 }
