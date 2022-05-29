@@ -5,44 +5,84 @@ import (
 	"net"
 )
 
-func GetIP() (string, error) {
-	return GetIPv4()
+func GetLocalIP() (string, error) {
+	return GetLocalIPv4()
 }
 
-func GetIPv4() (string, error) {
-	ip, err := getNetIP()
+func GetLocalIPv4() (string, error) {
+	addrs, err := getAddrs()
 	if err != nil {
-		return "", err
+		return "", errors.New("获取IP失败: " + err.Error())
 	}
-	if len(ip) <= 0 {
-		return "", errors.New("你好像没有接入局域网？")
+	for _, addr := range addrs {
+		ip := getLocalIP(addr)
+		if ip == nil {
+			continue
+		}
+		ip = ip.To4()
+		if ip == nil {
+			continue // not an ipv4 address
+		}
+		return ip.String(), nil
 	}
-	return ip.To4().String(), nil
+	return "", errors.New("获取 IPv4 地址失败")
 }
 
-func GetIPv6() (string, error) {
-	ip, err := getNetIP()
+func GetLocalIPv6() (string, error) {
+	addrs, err := getAddrs()
 	if err != nil {
-		return "", err
+		return "", errors.New("获取IP失败: " + err.Error())
 	}
-	if len(ip) <= 0 {
-		return "", errors.New("你好像没有接入局域网？")
+	for _, addr := range addrs {
+		ip := getLocalIP(addr)
+		if ip == nil {
+			continue
+		}
+		if ip = ip.To16(); ip == nil {
+			continue // not an ipv6 address
+		}
+		return ip.String(), nil
 	}
-	return ip.To16().String(), nil
+	return "", errors.New("获取 IPv6 地址失败")
 }
 
-func getNetIP() (ip net.IP, err error) {
-	addrs, err := net.InterfaceAddrs()
+func getAddrs() ([]net.Addr, error) {
+	var addrss []net.Addr
+	ifaces, err := net.Interfaces()
 	if err != nil {
 		return nil, err
 	}
-	for _, address := range addrs {
-		// check the address type and if it is not a loopback the display it
-		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-			if ipnet.IP.To4() != nil {
-				return ipnet.IP, nil
-			}
+	for _, iface := range ifaces {
+		if iface.Flags&net.FlagUp == 0 {
+			continue // 网卡没有开启
 		}
+		if iface.Flags&net.FlagLoopback != 0 {
+			continue // 这是个环回地址
+		}
+		addrs, err := iface.Addrs()
+		if err != nil {
+			continue
+		}
+		addrss = append(addrss, addrs...)
 	}
-	return
+	if len(addrss) <= 0 {
+		return nil, errors.New("你好像没有接入局域网？")
+	}
+	return addrss, nil
+}
+
+func getLocalIP(addr net.Addr) net.IP {
+	var ip net.IP
+	switch v := addr.(type) {
+	case *net.IPNet:
+		ip = v.IP
+	case *net.IPAddr:
+		ip = v.IP
+	default:
+		return nil
+	}
+	if ip == nil || ip.IsLoopback() {
+		return nil
+	}
+	return ip
 }
