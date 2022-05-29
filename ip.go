@@ -31,39 +31,18 @@ func GetIPv6() (string, error) {
 	return ip.To16().String(), nil
 }
 
-func getNetIP() (net.IP, error) {
-	ifaces, err := net.Interfaces()
+func getNetIP() (ip net.IP, err error) {
+	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		return nil, err
 	}
-	// 取所有网卡IP
-	var addrs []net.Addr
-	for _, iface := range ifaces {
-		if iface.Flags&net.FlagUp == 0 {
-			continue // interface down
+	for _, address := range addrs {
+		// check the address type and if it is not a loopback the display it
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP, nil
+			}
 		}
-		if iface.Flags&net.FlagLoopback != 0 {
-			continue // loopback interface
-		}
-		addrs, err = iface.Addrs()
-		if err != nil {
-			return nil, err
-		}
-		break
 	}
-
-	for _, addr := range addrs {
-		var ip net.IP
-		switch v := addr.(type) {
-		case *net.IPNet:
-			ip = v.IP
-		case *net.IPAddr:
-			ip = v.IP
-		}
-		if ip == nil || ip.IsLoopback() {
-			continue
-		}
-		return ip, nil
-	}
-	return nil, nil
+	return
 }
