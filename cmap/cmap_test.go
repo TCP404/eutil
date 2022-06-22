@@ -26,6 +26,13 @@ func TestRMap(t *testing.T) {
 		}
 	}
 
+	// Del
+	rw.Del(3)
+	if rw.HasKey(3) {
+		t.Errorf("rm.Del(%v) faild \n", 3)
+	}
+	rw.Put(3, 3)
+
 	// Len
 	l := rw.Len()
 	if l != len(sample) {
@@ -46,6 +53,7 @@ func TestRMap(t *testing.T) {
 		t.Errorf("rm.Keys() want: %#v, got: %#v \n", sample, keys)
 	}
 
+	// Clear
 	rw.Clear()
 	if rw.Len() != 0 {
 		t.Errorf("rm.Clear() clear faild \n")
@@ -66,7 +74,7 @@ func TestRWMapRace(t *testing.T) {
 	}
 }
 
-func BenchmarkRWMapGet(b *testing.B) {
+func BenchmarkRWMap_Get(b *testing.B) {
 	rw := NewRWMap[int, int]()
 	for i := 0; i < 100; i++ {
 		rw.Put(i, i)
@@ -77,7 +85,7 @@ func BenchmarkRWMapGet(b *testing.B) {
 	}
 }
 
-func BenchmarkRWMapPut(b *testing.B) {
+func BenchmarkRWMap_Put(b *testing.B) {
 	rw := NewRWMap[int, int]()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -145,7 +153,7 @@ func TestMapRace(t *testing.T) {
 	}
 }
 
-func BenchmarkMapGet(b *testing.B) {
+func BenchmarkMap_Get(b *testing.B) {
 	m := NewMap[int, int]()
 	times := b.N
 	for i := 0; i < times; i++ {
@@ -157,7 +165,7 @@ func BenchmarkMapGet(b *testing.B) {
 	}
 }
 
-func BenchmarkMapPut(b *testing.B) {
+func BenchmarkMap_Put(b *testing.B) {
 	m := NewMap[int, int]()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

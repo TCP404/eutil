@@ -112,7 +112,7 @@ func (rw *RWMap[K, V]) Values() []V {
 	return result
 }
 
-func (rw *RWMap[K, V]) ToCSet() *cset.RWSet[K] {
+func (rw *RWMap[K, V]) ToCSet() cset.ConcurrenceSet[K] {
 	s := cset.NewRWSet[K]()
 	rw.mu.RLock()
 	defer rw.mu.RUnlock()

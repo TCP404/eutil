@@ -25,8 +25,8 @@ func (s set[T]) Remove(elems ...T) set[T] {
 
 // 改 update
 func (s set[T]) Update(old, new T) set[T] {
-	s.Remove(old)
-	s.Add(new)
+	delete(s, old)
+	s[new] = struct{}{}
 	return s
 }
 
@@ -55,7 +55,7 @@ func (s set[T]) Pop() T {
 	var elem T
 	for k := range s {
 		elem = k
-		s.Remove(k)
+		delete(s, k)
 	}
 	return elem
 }
@@ -87,9 +87,7 @@ func Union[T comparable](set1, set2 set[T]) set[T] {
 // 差集 diff
 func (s set[T]) Diff(other set[T]) set[T] {
 	for k1 := range other {
-		if _, ok := s[k1]; ok {
-			s.Remove(k1)
-		}
+		delete(s, k1)
 	}
 	return s
 }
@@ -107,7 +105,7 @@ func Diff[T comparable](s1, s2 set[T]) set[T] {
 func (s set[T]) Intersection(other set[T]) set[T] {
 	for k := range s {
 		if _, ok := other[k]; !ok {
-			s.Remove(k)
+			delete(s, k)
 		}
 	}
 	return s
