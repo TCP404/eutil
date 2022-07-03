@@ -7,7 +7,6 @@ import (
 )
 
 func TestMD5(t *testing.T) {
-	// 09f418152db9d8bc93180c4972677638
 	var tests = map[string]struct {
 		in   string
 		want string
@@ -29,7 +28,6 @@ func TestMD5(t *testing.T) {
 }
 
 func TestSHA256(t *testing.T) {
-	// 09f418152db9d8bc93180c4972677638
 	var tests = map[string]struct {
 		in   string
 		want string
@@ -49,7 +47,6 @@ func TestSHA256(t *testing.T) {
 }
 
 func TestSHA512(t *testing.T) {
-	// 09f418152db9d8bc93180c4972677638
 	var tests = map[string]struct {
 		in   string
 		want string
