@@ -72,20 +72,6 @@ func (rw *RWMap[K, V]) HasKey(key K) bool {
 	return ok
 }
 
-// func (rm *RMap[K, V]) HasValue(val V) bool {
-// 	rm.mu.RLock()
-// 	defer rm.mu.RUnlock()
-// 	if len(rm.m) == 0 {
-// 		return false
-// 	}
-// 	for _, v := range rm.m {
-// 		if v == val {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
-
 func (rw *RWMap[K, V]) Keys() []K {
 	rw.mu.RLock()
 	defer rw.mu.RUnlock()
