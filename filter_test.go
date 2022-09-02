@@ -7,7 +7,7 @@ import (
 )
 
 func TestFilter(t *testing.T) {
-	add := func(x int) (int, bool) { return x, x > 40 }
+	add := func(x int) bool { return x > 40 }
 	got := eutil.Filter(add, 100, 41, 23, 554, 33)
 	want := []any{100, 41, 554}
 	for i, v := range got {

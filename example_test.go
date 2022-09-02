@@ -24,7 +24,7 @@ func ExampleSHA512() {
 }
 
 func ExampleFilter() {
-	add := func(x int) (int, bool) { return x, x > 40 }
+	add := func(x int) bool { return x > 40 }
 	got := Filter(add, 100, 41, 23, 554, 33)
 	fmt.Println(got)
 	// Output: [100 41 554]
@@ -48,4 +48,23 @@ func ExampleSizeFmt() {
 	got := SizeFmt(8 << 10)
 	fmt.Println(got)
 	// Output: 1.0KB
+}
+
+func ExampleOr() {
+	cmdFlag := func() string {
+		// Code parse from command line
+		return ""
+	}
+	env := func() string {
+		// Code get environment variable
+		return "/path/to/config.toml"
+	}
+	_default := func() string {
+		return "/default/path/config.toml"
+	}
+	// Use like this
+	configPath := Or("", cmdFlag, env, _default)
+
+	fmt.Println(configPath)
+	// Output: /path/to/config.toml
 }

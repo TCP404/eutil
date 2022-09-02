@@ -1,7 +1,7 @@
 package eutil
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/parnurzeal/gorequest"
 )
@@ -11,7 +11,7 @@ func DownloadBinary(url, path string) []error {
 	if len(errs) != 0 {
 		return errs
 	}
-	err := ioutil.WriteFile(path, body, 0755)
+	err := os.WriteFile(path, body, 0755)
 	if err != nil {
 		return []error{err}
 	}
