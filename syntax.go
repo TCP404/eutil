@@ -7,8 +7,10 @@ func If[T any](cond bool, t T, f T) T {
 	return f
 }
 
-// Or executes the given functions and compares will the zero value, it will
-// return the not-zero value in once. It is a parody of the OR operator in Python.
+// Or iterates over the given functions and compares the return value to a zero
+// value, returning it as soon as it gets a nonzero value. It is a parody of the
+// OR operator in Python.
+//
 // You can get the basic usage on example_test file.
 // In additional, there is another solution:
 //
@@ -50,11 +52,27 @@ func If[T any](cond bool, t T, f T) T {
 //		configPath := cmdFlag().or.env().or._default()
 //		// use configPath
 //	}
-func Or[T comparable](unwished T, fns ...func() T) T {
+func Or[T comparable](fns ...func() T) (res T) {
+	var zero = res
 	for _, fn := range fns {
-		if v := fn(); v != unwished {
+		if v := fn(); v != zero {
 			return v
 		}
 	}
-	return unwished
+	return zero
+}
+
+// OrUnwished like the function Or but can indicate the unwished value. It will
+// traverses through the given function and compares to the unwished value,
+// returning it as soon as it gets the value is not equal non-unwished value
+// and not equal zero value. However, it will return a zero value when every
+// function return the unwished value.
+func OrUnwish[T comparable](unwish T, fns ...func() T) (res T) {
+	var zero = res
+	for _, fn := range fns {
+		if v := fn(); v != unwish && v != zero {
+			return v
+		}
+	}
+	return zero
 }
