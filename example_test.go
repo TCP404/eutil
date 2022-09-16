@@ -64,7 +64,7 @@ func ExampleOr() {
 		return "/default/path/config.toml"
 	}
 	// Use like this
-	configPath := Or(cmdFlag, env, _default)
+	configPath := Or(cmdFlag(), env(), _default())
 	fmt.Println(configPath)
 
 	// Usage 2
@@ -72,7 +72,7 @@ func ExampleOr() {
 	fn2 := func() int { return 0 }
 	fn3 := func() int { return 3 }
 	fn4 := func() int { return 4 }
-	got := Or(fn1, fn2, fn3, fn4)
+	got := Or(fn1(), fn2(), fn3(), fn4())
 	fmt.Println(got)
 
 	// Output:
@@ -85,7 +85,7 @@ func ExampleOrUnwish() {
 	fn2 := func() int { return 2 }
 	fn3 := func() int { return 3 }
 	fn4 := func() int { return 4 }
-	got := OrUnwish(2, fn1, fn2, fn3, fn4)
+	got := OrUnwish(2, fn1(), fn2(), fn3(), fn4())
 	fmt.Println(got)
 
 	// Output: 3

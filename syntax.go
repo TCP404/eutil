@@ -52,10 +52,10 @@ func If[T any](cond bool, t T, f T) T {
 //		configPath := cmdFlag().or.env().or._default()
 //		// use configPath
 //	}
-func Or[T comparable](fns ...func() T) (res T) {
+func Or[T comparable](args ...T) (res T) {
 	var zero = res
-	for _, fn := range fns {
-		if v := fn(); v != zero {
+	for _, v := range args {
+		if v != zero {
 			return v
 		}
 	}
@@ -67,10 +67,10 @@ func Or[T comparable](fns ...func() T) (res T) {
 // returning it as soon as it gets the value is not equal non-unwished value
 // and not equal zero value. However, it will return a zero value when every
 // function return the unwished value.
-func OrUnwish[T comparable](unwish T, fns ...func() T) (res T) {
+func OrUnwish[T comparable](unwish T, args ...T) (res T) {
 	var zero = res
-	for _, fn := range fns {
-		if v := fn(); v != unwish && v != zero {
+	for _, v := range args {
+		if v != unwish && v != zero {
 			return v
 		}
 	}
