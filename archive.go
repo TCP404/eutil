@@ -57,10 +57,10 @@ func Zip(dst *os.File, src string) error {
 		}
 		// 打开要压缩的文件
 		fr, err := os.Open(path)
-		defer fr.Close()
 		if err != nil {
 			return err
 		}
+		defer fr.Close()
 
 		// 将打开的文件 Copy 到 w
 		_, err = io.Copy(w, fr)
@@ -72,10 +72,10 @@ func UnZip(dst, src string) error {
 	// 打开压缩文件，这个 zip 包有个方便的 ReadCloser 类型
 	// 这个里面有个方便的 OpenReader 函数，可以比 tar 的时候省去一个打开文件的步骤
 	zr, err := zip.OpenReader(src)
-	defer zr.Close()
 	if err != nil {
 		return err
 	}
+	defer zr.Close()
 
 	// 如果解压后不是放在当前目录就按照保存目录去创建目录
 	if dst != "" {

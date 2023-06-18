@@ -1,5 +1,10 @@
 package eutil
 
+import (
+	"reflect"
+	"unsafe"
+)
+
 func If[T any](cond bool, t T, f T) T {
 	if cond {
 		return t
@@ -75,4 +80,19 @@ func OrUnwish[T comparable](unwish T, args ...T) (res T) {
 		}
 	}
 	return zero
+}
+
+// B2S means slice of byte to string
+func B2S(b []byte) string {
+	return *(*string)(unsafe.Pointer(&b))
+}
+
+// S2B means string to byte slice
+func S2B(s string) (b []byte) {
+	bh := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	bh.Data = sh.Data
+	bh.Cap = sh.Len
+	bh.Len = sh.Len
+	return b
 }

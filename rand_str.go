@@ -13,5 +13,5 @@ func RandString(n int) string {
 	for i := range result {
 		result[i] = letters[rand.Int63()%lettersLen]
 	}
-	return string(result)
+	return B2S(result)
 }
