@@ -1,6 +1,7 @@
 package eutil_test
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/TCP404/eutil"
@@ -60,6 +61,52 @@ func TestSHA512(t *testing.T) {
 			got := eutil.SHA512(tc.in)
 			if got != tc.want {
 				t.Errorf("got: %v, want: %v", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestAesEncrypt(t *testing.T) {
+	var tests = map[string]struct {
+		in   string
+		key  string
+		want []byte
+	}{
+		"1": {in: "MyName is Boii", key: "1234567890123456", want: []byte{0xc3, 0xa1, 0x8d, 0x47, 0x23, 0xde, 0xe9, 0x7a, 0x6a, 0x12, 0x3d, 0x56, 0xdd, 0xca, 0x7c, 0x72}},
+		"2": {in: "This is my util", key: "1234567890123456", want: []byte{0x2c, 0xc0, 0xa7, 0xb0, 0xbc, 0xb6, 0x33, 0x77, 0x6a, 0xf2, 0xd8, 0x63, 0x43, 0x24, 0xcb, 0xdd}},
+		"3": {in: "You can use it", key: "1234567890123456", want: []byte{0xcc, 0x6d, 0x6c, 0x5f, 0x3e, 0x61, 0x69, 0xde, 0x1d, 0xc3, 0xf9, 0xbb, 0xbf, 0xb6, 0xba, 0x82}},
+	}
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			got, err := eutil.AesEncrypt([]byte(tc.in), []byte(tc.key))
+			if err != nil {
+				t.Errorf("err: %v", err)
+			}
+			if !bytes.Equal(got, tc.want) {
+				t.Errorf("got: %#v, want: %v", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestAesDecrypt(t *testing.T) {
+	var tests = map[string]struct {
+		in   []byte
+		key  string
+		want string
+	}{
+		"1": {in: []byte{0xc3, 0xa1, 0x8d, 0x47, 0x23, 0xde, 0xe9, 0x7a, 0x6a, 0x12, 0x3d, 0x56, 0xdd, 0xca, 0x7c, 0x72}, key: "1234567890123456", want: "MyName is Boii"},
+		"2": {in: []byte{0x2c, 0xc0, 0xa7, 0xb0, 0xbc, 0xb6, 0x33, 0x77, 0x6a, 0xf2, 0xd8, 0x63, 0x43, 0x24, 0xcb, 0xdd}, key: "1234567890123456", want: "This is my util"},
+		"3": {in: []byte{0xcc, 0x6d, 0x6c, 0x5f, 0x3e, 0x61, 0x69, 0xde, 0x1d, 0xc3, 0xf9, 0xbb, 0xbf, 0xb6, 0xba, 0x82}, key: "1234567890123456", want: "You can use it"},
+	}
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			got, err := eutil.AesDecrypt(tc.in, []byte(tc.key))
+			if err != nil {
+				t.Errorf("err: %v", err)
+			}
+			if string(got) != tc.want {
+				t.Errorf("got: %v, want: %v", string(got), tc.want)
 			}
 		})
 	}
