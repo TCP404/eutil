@@ -12,7 +12,7 @@ func TestFetch(t *testing.T) {
 		url  = "http://httpbin.org/post"
 		body = []byte(`{"key1": "value1", "key2": "value2"}`)
 	)
-	p := Fetch(url, body, nil).
+	p := Fetch(http.MethodPost, url, body, nil, 0).
 		Then(func(res *http.Response) {
 			fmt.Println(res.StatusCode)
 		}).
@@ -21,7 +21,7 @@ func TestFetch(t *testing.T) {
 			fmt.Println(string(b))
 			_ = res.Body.Close()
 		}).
-		Catch(func(err error) {
+		Catch(func(res *http.Response, err error) {
 			fmt.Println(err.Error())
 		})
 
@@ -33,7 +33,7 @@ func BenchmarkFetch(b *testing.B) {
 		url  = "http://httpbin.org/post"
 		body = []byte(`{"key1": "value1", "key2": "value2"}`)
 	)
-	p := Fetch(url, body, nil).
+	p := Fetch(http.MethodPost, url, body, nil, 0).
 		Then(func(res *http.Response) {
 			// fmt.Println(res.StatusCode)
 		}).
@@ -42,7 +42,7 @@ func BenchmarkFetch(b *testing.B) {
 			// fmt.Println(string(b))
 			// res.Body.Close()
 		}).
-		Catch(func(err error) {
+		Catch(func(res *http.Response, err error) {
 			// fmt.Println(err.Error())
 		})
 	b.ResetTimer()
