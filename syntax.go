@@ -1,7 +1,7 @@
 package eutil
 
 import (
-	"reflect"
+	"encoding/json"
 	"unsafe"
 )
 
@@ -57,6 +57,8 @@ func If[T any](cond bool, t T, f T) T {
 //		configPath := cmdFlag().or.env().or._default()
 //		// use configPath
 //	}
+//
+// Deprecated: Use cmp.Or instead.
 func Or[T comparable](args ...T) (res T) {
 	var zero = res
 	for _, v := range args {
@@ -82,17 +84,34 @@ func OrUnwish[T comparable](unwish T, args ...T) (res T) {
 	return zero
 }
 
+// In checks if the first argument is in the rest of the arguments.
+// It returns true if the first argument is in the rest of the arguments.
+func In[T comparable](ori T, args ...T) bool {
+	for _, arg := range args {
+		if arg == ori {
+			return true
+		}
+	}
+	return false
+}
+
 // B2S means slice of byte to string
 func B2S(b []byte) string {
 	return *(*string)(unsafe.Pointer(&b))
 }
 
 // S2B means string to byte slice
-func S2B(s string) (b []byte) {
-	bh := (*reflect.SliceHeader)(unsafe.Pointer(&b))
-	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
-	bh.Data = sh.Data
-	bh.Cap = sh.Len
-	bh.Len = sh.Len
-	return b
+func S2B(s string) []byte {
+	return unsafe.Slice(unsafe.StringData(s), len(s))
+}
+
+func DeepCopy[T any](src T, dst *T) error {
+	b, err := json.Marshal(src)
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(b, dst); err != nil {
+		return err
+	}
+	return nil
 }
