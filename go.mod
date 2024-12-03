@@ -1,6 +1,6 @@
 module github.com/TCP404/eutil
 
-go 1.21
+go 1.23
 
 require (
 	github.com/parnurzeal/gorequest v0.2.16
