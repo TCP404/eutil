@@ -8,14 +8,14 @@ import (
 
 type Err struct {
 	StackPCS
-	Msg
+	*Msg
 	text string
 }
 
 func Wrap(err error, enStr ApiErrMsg, skip ...int) *Err {
 	return &Err{
 		StackPCS: Callers(skip...),
-		Msg: Msg{
+		Msg: &Msg{
 			enStr: enStr,
 		},
 		text: fmt.Sprintf("%v: %v", err.Error(), enStr),
@@ -25,7 +25,7 @@ func Wrap(err error, enStr ApiErrMsg, skip ...int) *Err {
 func Wrapf(err error, enStr ApiErrMsg, args ...any) *Err {
 	return &Err{
 		StackPCS: Callers(),
-		Msg: Msg{
+		Msg: &Msg{
 			enStr: enStr,
 		},
 		text: fmt.Sprintf("%v: %v", fmt.Sprintf(err.Error(), args...), enStr),
@@ -35,7 +35,7 @@ func Wrapf(err error, enStr ApiErrMsg, args ...any) *Err {
 func New(enStr ApiErrMsg, skip ...int) *Err {
 	return &Err{
 		StackPCS: Callers(skip...),
-		Msg: Msg{
+		Msg: &Msg{
 			enStr: enStr,
 		},
 		text: string(enStr),
@@ -45,7 +45,7 @@ func New(enStr ApiErrMsg, skip ...int) *Err {
 func Newf(enStr ApiErrMsg, args ...any) *Err {
 	return &Err{
 		StackPCS: Callers(),
-		Msg: Msg{
+		Msg: &Msg{
 			enStr: enStr,
 		},
 		text: fmt.Sprintf(string(enStr), args...),

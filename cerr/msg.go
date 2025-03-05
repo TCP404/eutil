@@ -8,29 +8,29 @@ type Msg struct {
 	cnStr ApiErrMsg
 }
 
-func (c Msg) String() string {
+func (c *Msg) String() string {
 	return string(c.enStr)
 }
 
-func (c Msg) EN() string {
+func (c *Msg) EN() string {
 	return string(c.enStr)
 }
 
-func (c Msg) CN() string {
+func (c *Msg) CN() string {
 	return string(c.cnStr)
 }
 
-func (c Msg) SetCode(code int) Msg {
+func (c *Msg) SetCode(code int) *Msg {
 	c.Code = code
 	return c
 }
 
-func (c Msg) SetEN(enMsg ApiErrMsg) Msg {
+func (c *Msg) SetEN(enMsg ApiErrMsg) *Msg {
 	c.enStr = enMsg
 	return c
 }
 
-func (c Msg) SetCN(cnMsg ApiErrMsg) Msg {
+func (c *Msg) SetCN(cnMsg ApiErrMsg) *Msg {
 	c.cnStr = cnMsg
 	return c
 }
