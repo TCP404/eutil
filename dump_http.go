@@ -88,22 +88,31 @@ func (d *dumpResponse) StatusCode() *dumpResponse {
 }
 
 func (d *dumpRequest) Url() *dumpRequest {
-	d.buf.WriteString(_cyan + d.req.URL.String() + reset)
+	d.buf.WriteString(_cyan)
+	d.buf.WriteString(d.req.URL.String())
+	d.buf.WriteString(reset)
 	return d
 }
 
 func (d *dump) KV(k, v string) *dump {
-	d.buf.WriteString(_blue + k + reset)
+	d.buf.WriteString(_blue)
+	d.buf.WriteString(k)
+	d.buf.WriteString(reset)
 	d.buf.WriteString(": ")
-	d.buf.WriteString(_green + v + reset)
+	d.buf.WriteString(_green)
+	d.buf.WriteString(v)
+	d.buf.WriteString(reset)
 	return d
 }
 
 func (d *dump) Body(dest *bytes.Buffer) *dump {
 	var buf bytes.Buffer
-	json.Indent(&buf, dest.Bytes(), "", "    ")
 	d.buf.WriteString(_yellow)
-	d.buf.Write(buf.Bytes())
+	if err := json.Indent(&buf, dest.Bytes(), "", "    "); err != nil {
+		d.buf.Write(dest.Bytes())
+	} else {
+		d.buf.Write(buf.Bytes())
+	}
 	d.buf.WriteString(reset)
 	return d
 }
@@ -124,7 +133,8 @@ func drainBody(b io.ReadCloser) (r1, r2 io.ReadCloser, err error) {
 }
 
 func (d *dump) HTTPVersion(major, minor string) *dump {
-	d.buf.WriteString(_white + "HTTP/")
+	d.buf.WriteString(_white)
+	d.buf.WriteString("HTTP/")
 	d.buf.WriteString(major)
 	d.buf.WriteByte('.')
 	d.buf.WriteString(minor)
@@ -164,7 +174,9 @@ func DumpReq(req *http.Request) []byte {
 		if err != nil {
 			return nil
 		}
-		io.Copy(buf, save)
+		if _, err := io.Copy(buf, save); err != nil {
+			return nil
+		}
 		d.Body(buf).newLine()
 	}
 	return d.buf.Bytes()
@@ -187,8 +199,11 @@ func DumpResp(resp *http.Response) []byte {
 			b   []byte
 			buf = bytes.NewBuffer(b)
 		)
-		reqBody, _ := io.ReadAll(d.res.Body)
-		json.Indent(buf, reqBody, "", "    ")
+		reqBody, err := io.ReadAll(d.res.Body)
+		if err != nil {
+			return nil
+		}
+		buf.Write(reqBody)
 		d.Body(buf).newLine()
 	}
 	return d.buf.Bytes()

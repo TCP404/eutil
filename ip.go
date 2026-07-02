@@ -14,6 +14,11 @@ func GetLocalIPv4() (string, error) {
 	if err != nil {
 		return "", errors.New("获取IP失败: " + err.Error())
 	}
+	return selectLocalIPv4(addrs)
+}
+
+func selectLocalIPv4(addrs []net.Addr) (string, error) {
+	var firstIPv4 string
 	for _, addr := range addrs {
 		ip := getLocalIP(addr)
 		if ip == nil {
@@ -23,7 +28,15 @@ func GetLocalIPv4() (string, error) {
 		if ip == nil {
 			continue // not an ipv4 address
 		}
-		return ip.String(), nil
+		if firstIPv4 == "" {
+			firstIPv4 = ip.String()
+		}
+		if ip.IsPrivate() {
+			return ip.String(), nil
+		}
+	}
+	if firstIPv4 != "" {
+		return firstIPv4, nil
 	}
 	return "", errors.New("获取 IPv4 地址失败")
 }

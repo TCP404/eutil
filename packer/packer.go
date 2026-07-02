@@ -91,8 +91,7 @@ func (t *BaseAny) Marshal() []byte {
 	return b
 }
 
-func (t *BaseAny) Unmarshal(b []byte) (result Any) {
-	result = t
+func (t *BaseAny) Unmarshal(b []byte) Any {
 	t.err = json.Unmarshal(b, t.origin)
 	return t
 }
@@ -172,8 +171,7 @@ func (a *Agent) Kind() reflect.Kind {
 	return a.kind
 }
 
-func (a *Agent) Index(i int) (result Agency) {
-	result = a
+func (a *Agent) Index(i int) Agency {
 	if a.ValueType() != ArrayValue {
 		a.err = errors.Errorf("%v is not a array or slice", a.path)
 		return a
@@ -189,7 +187,7 @@ func (a *Agent) Index(i int) (result Agency) {
 	e.kind = v.Kind()
 	e.val = v
 
-	return a
+	return e
 }
 func (a *Agent) Set(value any) (result Agency) {
 	result = a

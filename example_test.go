@@ -45,7 +45,7 @@ func ExampleReduce() {
 }
 
 func ExampleSizeFmt() {
-	got := SizeFmt(8 << 10)
+	got := SizeFmt(1 << 10)
 	fmt.Println(got)
 	// Output: 1.0KB
 }

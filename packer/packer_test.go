@@ -175,3 +175,20 @@ func TestAgent_Set(t *testing.T) {
 		})
 	}
 }
+
+func TestAgentIndexReturnsIndexedElement(t *testing.T) {
+	type indexedStruct struct {
+		Items []string `json:"items"`
+	}
+	ts := indexedStruct{Items: []string{"first", "second"}}
+
+	tp := Parse(&ts)
+	require.Nil(t, tp.LastError())
+	arrayAgent, ok := tp.Get("items").(*Agent)
+	require.True(t, ok)
+
+	item := arrayAgent.Index(1)
+	require.Nil(t, item.LastError())
+	require.Equal(t, reflect.String, item.Kind())
+	require.Equal(t, "second", item.ToString())
+}

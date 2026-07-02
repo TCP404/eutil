@@ -115,3 +115,48 @@ func DeepCopy[T any](src T, dst *T) error {
 	}
 	return nil
 }
+
+type applyFunc[T any] func(T) T
+
+func Apply[T any](fn applyFunc[T], args ...T) []T {
+	for i, v := range args {
+		args[i] = fn(v)
+	}
+	return args
+}
+
+type mapFunc[T, V any] func(T) V
+
+func Map[T, V any](fn mapFunc[T, V], args ...T) []V {
+	res := make([]V, 0, len(args))
+	for _, v := range args {
+		res = append(res, fn(v))
+	}
+	return res
+}
+
+type reduceFunc[T any] func(T, T) T
+
+func Reduce[T any](fn reduceFunc[T], args ...T) (res T) {
+	if len(args) == 0 {
+		return
+	}
+	res = args[0]
+	l := len(args)
+	for i := 1; i < l; i++ {
+		res = fn(res, args[i])
+	}
+	return res
+}
+
+type filterFunc[T any] func(T) bool
+
+func Filter[T any](fn filterFunc[T], args ...T) []T {
+	res := make([]T, 0, len(args))
+	for _, v := range args {
+		if ok := fn(v); ok {
+			res = append(res, v)
+		}
+	}
+	return res
+}
