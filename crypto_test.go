@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/TCP404/eutil"
+	"github.com/tcp404/eutil"
 )
 
 func TestMD5(t *testing.T) {

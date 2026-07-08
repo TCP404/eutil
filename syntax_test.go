@@ -3,7 +3,7 @@ package eutil_test
 import (
 	"testing"
 
-	"github.com/TCP404/eutil"
+	"github.com/tcp404/eutil"
 )
 
 func TestMap(t *testing.T) {

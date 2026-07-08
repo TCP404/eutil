@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/TCP404/eutil"
+	"github.com/tcp404/eutil"
 )
 
 const (

@@ -3,7 +3,7 @@ package cmap
 import (
 	"sync"
 
-	"github.com/TCP404/eutil/cset"
+	"github.com/tcp404/eutil/cset"
 )
 
 type concurrenceMap[K comparable, V any] interface {

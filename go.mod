@@ -1,4 +1,4 @@
-module github.com/TCP404/eutil
+module github.com/tcp404/eutil
 
 go 1.23
 
